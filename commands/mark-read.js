@@ -1,8 +1,8 @@
-import { SlashCommandBuilder } from "discord.js";
+const { SlashCommandBuilder } = require("discord.js");
 
-export default {
+module.exports = {
     data: new SlashCommandBuilder()
-        .setName('markRead')
+        .setName('mark-read')
         .setDescription('Add book to has been read list'),
     async execute(interaction) {
         await interaction.reply('To be implemented');

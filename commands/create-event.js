@@ -1,8 +1,8 @@
-import { SlashCommandBuilder } from "discord.js";
+const { SlashCommandBuilder } = require("discord.js");
 
-export default {
+module.exports = {
     data: new SlashCommandBuilder()
-        .setName('createEvent')
+        .setName('create-event')
         .setDescription('Create an event for our next book club meeting'),
     async execute(interaction) {
         await interaction.reply('To be implemented');
