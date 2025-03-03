@@ -1,12 +1,10 @@
-const { SlashCommandBuilder } = require("discord.js");
-const eventReminders = require('../helpers/event-reminder.js');
+import { SlashCommandBuilder } from "discord.js";
+import {eventReminders} from '../helpers/event-reminder.js';
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('reminder')
-        .setDescription('Sends a reminder for future book club meeting'),
-    async execute(interaction) {
-		const embeds = await eventReminders(interaction.client)
-		await interaction.reply({embeds: embeds});
-    }
-};
+export const data = new SlashCommandBuilder()
+	.setName('reminder')
+	.setDescription('Sends a reminder for future book club meeting');
+export async function execute(interaction) {
+	const embeds = await eventReminders(interaction.client);
+	await interaction.reply({ embeds: embeds });
+}

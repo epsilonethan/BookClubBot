@@ -1,10 +1,8 @@
-const { SlashCommandBuilder } = require("discord.js");
+import { SlashCommandBuilder } from "discord.js";
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('cancel-poll')
-        .setDescription('Cancel the poll'),
-    async execute(interaction) {
-        await interaction.reply('To be implemented');
-    }
-};
+export const data = new SlashCommandBuilder()
+	.setName('cancel-poll')
+	.setDescription('Cancel the poll');
+export async function execute(interaction) {
+	await interaction.reply('To be implemented');
+}

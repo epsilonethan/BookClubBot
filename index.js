@@ -1,19 +1,19 @@
-const { Client, Events, GatewayIntentBits, Collection, EmbedBuilder } = require('discord.js');
-const dotenv = require("dotenv");
-const fs = require("fs");
-const path = require('path');
+import { Client, Events, GatewayIntentBits, Collection, MessageFlags } from 'discord.js';
+import { config } from "dotenv";
+import { readdirSync } from "fs";
+import { join } from 'path';
 
-dotenv.config()
+config()
 
 // Create a new Discord client instance
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
 
-const foldersPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(foldersPath).filter(file => file.endsWith('.js'));
+const foldersPath = join(process.cwd(), 'commands');
+const commandFiles = readdirSync(foldersPath).filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
-	const filePath = path.join(foldersPath, file);
-	const command = require(filePath);
+	const filePath = join(foldersPath, file);
+	const command = await import(filePath);
 	// Set a new item in the Collection with the key as the command name and the value as the exported module
 	if ('data' in command && 'execute' in command) {
 		client.commands.set(command.data.name, command);

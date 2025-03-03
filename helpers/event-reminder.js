@@ -1,46 +1,48 @@
-const { EmbedBuilder } = require('discord.js')
-const momenttz = require('moment-timezone');
+import { EmbedBuilder } from 'discord.js';
+import moment from 'moment-timezone';
+import { getWorkFromTitle, getWorkCoverImage, getIsbn } from './retrieve-book-info.js';
+import { OpenLibraryClient } from 'open-library-api';
 
-module.exports = async function eventReminders(client) {
+export async function eventReminders(client) {
+	const olc = new OpenLibraryClient();
+
 	function capitalizeWords(str) {
 		return str.split(' ')
 			.map(word => word.charAt(0).toUpperCase() + word.slice(1))
 			.join(' ');
 	}
 
-	let embeds = [];
-
 	try {
 		const guild = await client.guilds.fetch(process.env.GUILD_ID);
 		const events = await guild.scheduledEvents.fetch();
+		const textChannel = await guild.channels.fetch(process.env.CHANNEL_ID);
 
-		events.forEach(async (event) => {
-			const textChannel = await guild.channels.fetch(process.env.CHANNEL_ID);
-			const eventVoiceChannel = event.channel;
+		const event = events.filter(event => event.channel.name === textChannel.name).first()
+		const eventStartCst = moment.tz(event.scheduledStartAt, 'America/Chicago')
+		const eventStartEst = moment.tz(event.scheduledStartAt, 'America/New_York')
 
-			if (textChannel && eventVoiceChannel.name === textChannel.name && textChannel.isTextBased()) {
-				const eventStartCst = momenttz.tz(event.scheduledStartAt, 'America/Chicago')
-				const eventStartEst = momenttz.tz(event.scheduledStartAt, 'America/New_York')
+		const startString = `${eventStartCst.format('dddd, MMMM Do YYYY, h a z')} / ${eventStartEst.format('h a z')}`
 
-				const startString = `${eventStartCst.format('dddd, MMMM Do YYYY, h a z')} / ${eventStartEst.format('h a z')}`
+		const currentlyReading = event.description
 
-				const currentlyReading = 'Akata Witch'
-				const currentlyReadingLink = 'https://books.google.com/books/about/Akata_Witch.html?id=g2ZDrsToijoC'
-				const summary = 'book summary'
+		const work = await getWorkFromTitle(currentlyReading);
+		const currentlyReadingLink = 'https://openlibrary.org' + work.key
+		const summary = work.description
+		const isbn_13 = await getIsbn(work.key);
 
-				const embed = new EmbedBuilder()
-					.setTitle(`${capitalizeWords(textChannel.name.replace('-', ' '))} Reminder`)
-					.setColor('DarkRed')
-					.setDescription(`**Meeting on**: ${startString}\n` +
-									`**Book**: [${currentlyReading}](${currentlyReadingLink})\n` +
-									`**Summary**: ${summary}`)
+		console.log(olc.getCoverUrlByIsbn(isbn_13))
 
-				embeds.push(embed);
-			}
-		});
+		const embed = new EmbedBuilder()
+			.setTitle(`${capitalizeWords(textChannel.name.replace('-', ' '))} Reminder`)
+			.setColor('DarkRed')
+			.setDescription(`**Meeting on**: ${startString}\n` +
+				`**Book**: [${capitalizeWords(work.title)}](${currentlyReadingLink})\n` +
+				`**Summary**: ${summary}`)
+			.setImage(olc.getCoverUrlByIsbn(isbn_13))
+
+		return [embed]
+
 	} catch (error) {
 		console.error('Error sending event reminders:', error);
 	}
-
-	return embeds
 }
