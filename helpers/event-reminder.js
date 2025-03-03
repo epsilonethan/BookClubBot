@@ -27,10 +27,14 @@ export async function eventReminders(client) {
 
 		const work = await getWorkFromTitle(currentlyReading);
 		const currentlyReadingLink = 'https://openlibrary.org' + work.key
-		const summary = work.description
+		let summary;
+		if (typeof work.description === 'string') {
+			summary = work.description
+		} else {
+			summary = work.description.value
+		}
+		
 		const isbn_13 = await getIsbn(work.key);
-
-		console.log(olc.getCoverUrlByIsbn(isbn_13))
 
 		const embed = new EmbedBuilder()
 			.setTitle(`${capitalizeWords(textChannel.name.replace('-', ' '))} Reminder`)

@@ -29,7 +29,7 @@ export async function getIsbn(workKey) {
 
 	const editionsFiltered = editions.entries.filter(entry => checkForEnglish(entry) && (!('physical_format' in entry) || allowed_formats.includes(entry.physical_format.toLocaleLowerCase())))
 	const editionsSorted = editionsFiltered.sort((a, b) => b.latest_revision - a.latest_revision);
-	console.log(editionsSorted.length)
+
 	return editionsSorted[0].isbn_13[0]
 }
 
