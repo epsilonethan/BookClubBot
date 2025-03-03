@@ -15,9 +15,11 @@ export async function eventReminders(client) {
 	try {
 		const guild = await client.guilds.fetch(process.env.GUILD_ID);
 		const events = await guild.scheduledEvents.fetch();
-		const textChannel = await guild.channels.fetch(process.env.CHANNEL_ID);
+		const textChannel = await guild.channels.fetch(process.env.TEXT_CHANNEL_ID);
 
-		const event = events.filter(event => event.channel.name === textChannel.name).first()
+		const eventsFiltered = events.filter(event => event.channel.name === textChannel.name)
+		const eventsFilteredSorted = eventsFiltered.sort((a, b) => a.scheduledStartTimestamp - b.scheduledStartTimestamp);
+		const event = eventsFilteredSorted.first();
 		const eventStartCst = moment.tz(event.scheduledStartAt, 'America/Chicago')
 		const eventStartEst = moment.tz(event.scheduledStartAt, 'America/New_York')
 
@@ -37,9 +39,10 @@ export async function eventReminders(client) {
 		const isbn_13 = await getIsbn(work.key);
 
 		const embed = new EmbedBuilder()
-			.setTitle(`${capitalizeWords(textChannel.name.replace('-', ' '))} Reminder`)
+			.setTitle(`Next ${capitalizeWords(textChannel.name.replace('-', ' '))} Meeting Reminder`)
 			.setColor('DarkRed')
-			.setDescription(`**Meeting on**: ${startString}\n` +
+			.setDescription(`<@&${process.env.ROLE_ID}>\n` +
+				`**Meeting on**: ${startString}\n` +
 				`**Book**: [${capitalizeWords(work.title)}](${currentlyReadingLink})\n` +
 				`**Summary**: ${summary}`)
 			.setImage(olc.getCoverUrlByIsbn(isbn_13))
