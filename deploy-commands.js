@@ -14,6 +14,8 @@ const commands = [];
 let foldersPath = join(process.cwd(), 'commands');
 
 const commandFiles = readdirSync(foldersPath).filter(file => file.endsWith('.js'));
+console.log(foldersPath);
+console.log(commandFiles);
 for (const file of commandFiles) {
 	const filePath = join(foldersPath, file);
 	const command = await import(filePath);
