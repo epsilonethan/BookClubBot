@@ -6,6 +6,5 @@ export const data = new SlashCommandBuilder()
 	.setDescription('Sends a reminder for the next book club meeting');
 export async function execute(interaction) {
 	const embeds = await eventReminders(interaction.client);
-	await interaction.channel.send({embeds: embeds})
-	await interaction.deferReply();
+	await interaction.reply({embeds: embeds})
 }
