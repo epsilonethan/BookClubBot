@@ -1,6 +1,6 @@
 import { Client, Events, GatewayIntentBits, Collection, MessageFlags } from 'discord.js';
 import { config } from "dotenv";
-import { readdirSync } from "fs";
+import { readdirSync, existsSync } from "fs";
 import { join } from 'path';
 
 config()
@@ -11,7 +11,7 @@ client.commands = new Collection();
 
 let foldersPath;
 
-if (fs.existsSync(join(process.cwd(), 'commands'))){
+if (existsSync(join(process.cwd(), 'commands'))){
 	foldersPath = join(process.cwd(), 'commands');
 } else {
 	foldersPath = join(process.cwd(), 'app/commands');

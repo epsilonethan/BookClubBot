@@ -1,5 +1,5 @@
 import { REST, Routes } from 'discord.js';
-import { readdirSync } from 'node:fs';
+import { readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { config } from 'dotenv';
 
@@ -13,7 +13,7 @@ const commands = [];
 // Grab all the command folders from the commands directory you created earlier
 let foldersPath;
 
-if (fs.existsSync(join(process.cwd(), 'commands'))){
+if (existsSync(join(process.cwd(), 'commands'))){
 	foldersPath = join(process.cwd(), 'commands');
 } else {
 	foldersPath = join(process.cwd(), 'app/commands');
