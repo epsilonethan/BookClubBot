@@ -40,4 +40,4 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Push Docker image to DockerHub
       run: |
-        docker push $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:latest
+        docker push $DOCKER_USERNAME/$DOCKER_IMAGE_NAME --all-tags
