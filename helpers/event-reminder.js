@@ -6,10 +6,18 @@ import { OpenLibraryClient } from 'open-library-js';
 export async function eventReminders(client) {
 	const olc = new OpenLibraryClient();
 
-	function capitalizeWords(str) {
-		return str.split(' ')
-			.map(word => word.charAt(0).toUpperCase() + word.slice(1))
-			.join(' ');
+	function capitalizeWords(inputString) {
+		// Split the input string by hyphens
+		const words = inputString.split('-');
+
+		// Capitalize the first letter of each word and make other letters lowercase
+		const capitalizedWords = words.map(word => {
+			// Capitalize the first letter and make the rest lowercase
+			return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+		});
+
+		// Join the words back together with spaces
+		return capitalizedWords.join(' ');
 	}
 
 	try {
@@ -35,13 +43,13 @@ export async function eventReminders(client) {
 		} else {
 			summary = work.description.value
 		}
-		
+
 		const isbn_13 = await getIsbn(work.key);
 
 		const embed = new EmbedBuilder()
 			.setTitle(`Next ${capitalizeWords(textChannel.name.replace('-', ' '))} Meeting Reminder`)
 			.setColor('DarkRed')
-			.setDescription(`<@&${process.env.ROLE_ID}>\n` +
+			.setDescription(`<@&${process.env.ROLE_ID}> \n` +
 				`**Meeting on**: ${startString}\n` +
 				`**Book**: [${capitalizeWords(work.title)}](${currentlyReadingLink})\n` +
 				`**Summary**: ${summary}`)
