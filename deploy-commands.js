@@ -11,13 +11,7 @@ const token = process.env.DISCORD_TOKEN;
 
 const commands = [];
 // Grab all the command folders from the commands directory you created earlier
-let foldersPath;
-
-if (existsSync('/app/commands')){
-	foldersPath = '/app/commands';
-} else {
-	foldersPath = join(process.cwd(), 'commands');
-}
+let foldersPath = join(process.cwd(), 'commands');
 
 const commandFiles = readdirSync(foldersPath).filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {

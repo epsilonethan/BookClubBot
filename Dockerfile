@@ -12,8 +12,8 @@ RUN npm install
 
 # Copy the rest of the application code
 COPY index.js ./
-COPY commands ./
-COPY helpers ./
+COPY commands ./commands
+COPY helpers ./helpers
 COPY deploy-commands.js ./
 
 # Expose the port the app will run on (if applicable)

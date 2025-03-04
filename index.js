@@ -9,13 +9,7 @@ config()
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.commands = new Collection();
 
-let foldersPath;
-
-if (existsSync('/app/commands')){
-	foldersPath = '/app/commands';
-} else {
-	foldersPath = join(process.cwd(), 'commands');
-}
+let foldersPath = join(process.cwd(), 'commands');
 
 const commandFiles = readdirSync(foldersPath).filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
