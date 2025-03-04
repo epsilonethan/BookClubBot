@@ -49,7 +49,7 @@ export async function eventReminders(client) {
 		const embed = new EmbedBuilder()
 			.setTitle(`Next ${capitalizeWords(textChannel.name.replace('-', ' '))} Meeting Reminder`)
 			.setColor('DarkRed')
-			.setDescription(`<@&${process.env.ROLE_ID}> \n` +
+			.setDescription(`<@&${process.env.ROLE_ID}>\n` +
 				`**Meeting on**: ${startString}\n` +
 				`**Book**: [${capitalizeWords(work.title)}](${currentlyReadingLink})\n` +
 				`**Summary**: ${summary}`)
