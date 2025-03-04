@@ -11,10 +11,10 @@ client.commands = new Collection();
 
 let foldersPath;
 
-if (existsSync(join(process.cwd(), 'commands'))){
-	foldersPath = join(process.cwd(), 'commands');
+if (existsSync('/app/commands')){
+	foldersPath = '/app/commands';
 } else {
-	foldersPath = join(process.cwd(), 'app/commands');
+	foldersPath = join(process.cwd(), 'commands');
 }
 
 const commandFiles = readdirSync(foldersPath).filter(file => file.endsWith('.js'));
