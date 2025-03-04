@@ -21,4 +21,4 @@ COPY deploy-commands.js ./
 # EXPOSE 3000
 
 # Set the default command to run your app (replace 'index.js' with the entry file of your bot)
-CMD ["node", "deploy-commands.js", "&&", "node", "index.js"]
+CMD node deploy-commands.js && node index.js
