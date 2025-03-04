@@ -16,8 +16,6 @@ COPY commands ./
 COPY helpers ./
 COPY deploy-commands.js ./
 
-RUN node deploy-commands.js
-
 # Expose the port the app will run on (if applicable)
 # (Typically, Discord.js bots don’t use ports, but if you have a web server, set it accordingly)
 # EXPOSE 3000
