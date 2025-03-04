@@ -9,6 +9,7 @@
     "discord.js": "^14.18.0",
     "dotenv": "^16.4.7",
     "moment-timezone": "^0.5.47",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "open-library-js": "^0.0.1"
   }
 }

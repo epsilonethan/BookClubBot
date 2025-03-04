@@ -1,7 +1,7 @@
 import { EmbedBuilder } from 'discord.js';
 import moment from 'moment-timezone';
-import { getWorkFromTitle, getWorkCoverImage, getIsbn } from './retrieve-book-info.js';
-import { OpenLibraryClient } from 'open-library-api';
+import { getWorkFromTitle, getIsbn } from './retrieve-book-info.js';
+import { OpenLibraryClient } from 'open-library-js';
 
 export async function eventReminders(client) {
 	const olc = new OpenLibraryClient();

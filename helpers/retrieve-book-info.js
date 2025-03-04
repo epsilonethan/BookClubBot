@@ -1,4 +1,4 @@
-import { OpenLibraryClient } from 'open-library-api';
+import { OpenLibraryClient } from 'open-library-js';
 
 export async function getWorkFromTitle(title) {
 	const olc = new OpenLibraryClient();
