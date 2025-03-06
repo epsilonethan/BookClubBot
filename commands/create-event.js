@@ -17,7 +17,7 @@ export const data = new SlashCommandBuilder()
 			.setRequired(true)
 	);
 
-export async function execute(interaction) {
+export async function execute(interaction, pgClient) {
 	const dateString = interaction.options.getString('date');
 	const title = interaction.options.getString('title');
 	const date = moment.tz(dateString, "MM/DD/YYYY h a", "America/Chicago");
