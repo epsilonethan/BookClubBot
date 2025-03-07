@@ -13,6 +13,20 @@ export async function getWorkFromTitle(title) {
 	return olc.fetchWork(workKey)
 }
 
+export async function getWorkFromTitleAuthor(title, author) {
+	const olc = new OpenLibraryClient();
+	const searchCriteria = {
+		title: title,
+		author: author,
+		fields: 'key,title,author_name'
+	}
+
+	const searchResults = await olc.search(searchCriteria);
+	const workKey = searchResults.docs[0].key;
+
+	return olc.fetchWork(workKey)
+}
+
 export async function getIsbn(workKey) {
 	const olc = new OpenLibraryClient();
 	const editions = await olc.fetchEditions(workKey);

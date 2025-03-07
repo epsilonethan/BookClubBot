@@ -12,6 +12,7 @@
 		"moment-timezone": "^0.5.47",
 		"node-fetch": "^3.3.2",
 		"open-library-js": "^0.0.1",
-		"pg": "^8.13.3"
+		"pg": "^8.13.3",
+		"winston": "^3.17.0"
 	}
 }

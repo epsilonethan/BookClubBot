@@ -1,7 +1,8 @@
 import { REST, Routes } from 'discord.js';
-import { readdirSync, existsSync } from 'node:fs';
+import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { config } from 'dotenv';
+import {logger} from './helpers/logger.js';
 
 config();
 
@@ -14,8 +15,6 @@ const commands = [];
 let foldersPath = join(process.cwd(), 'commands');
 
 const commandFiles = readdirSync(foldersPath).filter(file => file.endsWith('.js'));
-console.log(foldersPath);
-console.log(commandFiles);
 for (const file of commandFiles) {
 	const filePath = join(foldersPath, file);
 	const command = await import(filePath);
@@ -23,7 +22,7 @@ for (const file of commandFiles) {
 	if ('data' in command && 'execute' in command) {
 		commands.push(command.data.toJSON());
 	} else {
-		console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
+		logger.error(`The command at ${filePath} is missing a required "data" or "execute" property.`);
 	}
 }
 
@@ -33,7 +32,7 @@ const rest = new REST().setToken(token);
 // and deploy your commands!
 (async () => {
 	try {
-		console.log(`Started refreshing ${commands.length} application (/) commands.`);
+		logger.info(`Started refreshing ${commands.length} application (/) commands.`);
 
 		// The put method is used to fully refresh all commands in the guild with the current set
 		const data = await rest.put(
@@ -41,9 +40,9 @@ const rest = new REST().setToken(token);
 			{ body: commands },
 		);
 
-		console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+		logger.info(`Successfully reloaded ${data.length} application (/) commands.`);
 	} catch (error) {
 		// And of course, make sure you catch and log any errors!
-		console.error(error);
+		logger.error(error);
 	}
 })();

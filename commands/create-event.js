@@ -4,7 +4,7 @@ import moment from 'moment-timezone'
 export const data = new SlashCommandBuilder()
 	.setName('create-event')
 	.setDescription('Create an event for next meeting')
-	.addStringOption(option => 
+	.addStringOption(option =>
 		option
 			.setName('date')
 			.setDescription('Date for next meeting in CST (MM/DD/YYYY h am/pm)')
@@ -17,7 +17,7 @@ export const data = new SlashCommandBuilder()
 			.setRequired(true)
 	);
 
-export async function execute(interaction, pgClient) {
+export async function execute(interaction, pgClientConfig) {
 	const dateString = interaction.options.getString('date');
 	const title = interaction.options.getString('title');
 	const date = moment.tz(dateString, "MM/DD/YYYY h a", "America/Chicago");

@@ -1,46 +1,33 @@
 import { SlashCommandBuilder } from "discord.js";
-import moment from "moment-timezone"
+import pg from "pg";
+import {logger} from "../helpers/logger.js";
+import {buildBookList} from "../helpers/build-book-list.js";
 
 export const data = new SlashCommandBuilder()
 	.setName('rec-list')
 	.setDescription('Show a list of all books that have been recommended');
-export async function execute(interaction, pgClient) {
+export async function execute(interaction, pgClientConfig) {
+
+	const pgClient = new pg.Client(pgClientConfig);
 
 	pgClient.connect()
-		.then(() => console.log('Connected to the database...'))
-		.catch((err) => console.log(err));
+		.catch((err) => logger.error(err));
 
-	const recList = await pgClient.query('SELECT * FROM bookclub.books WHERE read_start IS NULL AND read_end IS NULL ORDER BY added_date')
+	const recList = await pgClient
+		.query('SELECT * FROM bookclub.books WHERE read_start IS NULL AND read_end IS NULL ORDER BY id')
+		.catch(err => logger.error(err))
+		.finally(() => pgClient.end());
 
-	pgClient.end()
 
-	let botResponse = '**Recommended List**:\n';
-	let botResponses = [];
+	let botResponses = buildBookList('recommended', recList, interaction)
 
-	recList.rows.forEach((row, i) => {
-		const date = moment(row.added_date);
-		const user = interaction.client.users.cache.get(row.added_by)
-
-		let subString = `- **[${row.title}](https://openlibrary.org/works/${row.work_id})** by **${row.author}** \- *added on ${date.format('MM/DD/YYYY')}*`
-
-		if (user && user.globalName) {
-			subString += ` *by ${user.globalName}*`;
-		}
-
-		if ((botResponse + subString).length > 2000){
-			botResponses.push(botResponse);
-			botResponse = '';
-		}
-
-		botResponse += subString;
-		if(i !== recList.rows.length - 1){
-			botResponse += '\n';
-		}
-	})
-
+	let i = 0;
 	for (const response of botResponses) {
-		await interaction.channel.send(response);
+		if (i === 0){
+			await interaction.reply(response);
+		} else {
+			await interaction.followUp(response);
+		}
+		i++
 	}
-
-	await interaction.reply(botResponse);
 }
