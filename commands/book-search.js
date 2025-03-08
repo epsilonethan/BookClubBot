@@ -1,8 +1,0 @@
-import { SlashCommandBuilder } from "discord.js";
-
-export const data = new SlashCommandBuilder()
-	.setName('book-search')
-	.setDescription('Search for a book');
-export async function execute(interaction) {
-	await interaction.reply('To be implemented');
-}

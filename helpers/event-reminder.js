@@ -2,23 +2,11 @@ import { EmbedBuilder } from 'discord.js';
 import moment from 'moment-timezone';
 import { getWorkFromTitle, getIsbn } from './retrieve-book-info.js';
 import { OpenLibraryClient } from 'open-library-js';
+import { capitalizeWords } from "./capitalizeWords.js";
+import {logger} from './logger.js';
 
 export async function eventReminders(client) {
 	const olc = new OpenLibraryClient();
-
-	function capitalizeWords(inputString) {
-		// Split the input string by hyphens
-		const words = inputString.split('-');
-
-		// Capitalize the first letter of each word and make other letters lowercase
-		const capitalizedWords = words.map(word => {
-			// Capitalize the first letter and make the rest lowercase
-			return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-		});
-
-		// Join the words back together with spaces
-		return capitalizedWords.join(' ');
-	}
 
 	try {
 		const guild = await client.guilds.fetch(process.env.GUILD_ID);
@@ -47,7 +35,7 @@ export async function eventReminders(client) {
 		const isbn_13 = await getIsbn(work.key);
 
 		const embed = new EmbedBuilder()
-			.setTitle(`Next ${capitalizeWords(textChannel.name.replace('-', ' '))} Meeting Reminder`)
+			.setTitle(`Next ${capitalizeWords(textChannel.name)} Meeting Reminder`)
 			.setColor('DarkRed')
 			.setDescription(`<@&${process.env.ROLE_ID}>\n` +
 				`**Meeting on**: ${startString}\n` +
@@ -58,6 +46,7 @@ export async function eventReminders(client) {
 		return [embed]
 
 	} catch (error) {
+		logger.error('Attempted sending event reminders', error);
 		console.error('Error sending event reminders:', error);
 	}
 }
