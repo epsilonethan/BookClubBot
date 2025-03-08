@@ -8,7 +8,7 @@ config()
 
 // Create a new Discord client instance
 const client = new Client({
-	intents: [GatewayIntentBits.Guilds],
+	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
 	sweepers: {
 		...Options.DefaultSweeperSettings,
 		users: {
@@ -65,8 +65,10 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 
-client.once(Events.ClientReady, () => {
+client.once(Events.ClientReady, async () => {
     logger.info('Bot is online!');
+	const guild = await client.guilds.fetch(process.env.GUILD_ID)
+	await guild.members.fetch();
 })
 
 client.login(process.env.DISCORD_TOKEN);
