@@ -87,13 +87,19 @@ export async function setCurrentRead(pgClientConfig, interaction) {
         await pgClient.query(updateQuery, values)
             .then(results => {
                 logger.info(`Successfully set the current read`);
-                reply = `Successfully set the current read to ${title} by ${author}`
-                title = results.rows[0].title;
-                author = results.rows[0].author;
             })
             .catch(err => {
                 logger.error(err)
                 reply = `Something went wrong. Please try again later.`
+            });
+
+        await pgClient.query('SELECT * FROM bookclub.books WHERE read_start IS NOT NULL AND read_end IS NULL;')
+            .then(results => {
+                title = results.rows[0].title;
+                author = results.rows[0].author;
+                reply = `Successfully set the current read to ${title} by ${author}`
+            }).catch(err => {
+                logger.error(err)
             });
     }
 
