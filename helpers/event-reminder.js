@@ -32,16 +32,33 @@ export async function eventReminders(client) {
 			summary = work.description.value
 		}
 
-		const isbn_13 = await getIsbn(work.key);
+		let isbn_13;
+		try {
+			isbn_13 = await getIsbn(work.key);
+		} catch (e) {
+			logger.error(e)
+		}
 
-		const embed = new EmbedBuilder()
-			.setTitle(`Next ${capitalizeWords(textChannel.name)} Meeting Reminder`)
-			.setColor('DarkRed')
-			.setDescription(`<@&${process.env.ROLE_ID}>\n` +
-				`**Meeting on**: ${startString}\n` +
-				`**Book**: [${capitalizeWords(work.title)}](${currentlyReadingLink})\n` +
-				`**Summary**: ${summary}`)
-			.setImage(olc.getCoverUrlByIsbn(isbn_13))
+		let embed;
+		if (isbn_13) {
+			embed = new EmbedBuilder()
+				.setTitle(`Next ${capitalizeWords(textChannel.name)} Meeting Reminder`)
+				.setColor('DarkRed')
+				.setDescription(`<@&${process.env.ROLE_ID}>\n` +
+					`**Meeting on**: ${startString}\n` +
+					`**Book**: [${capitalizeWords(work.title)}](${currentlyReadingLink})\n` +
+					`**Summary**: ${summary}`)
+				.setImage(olc.getCoverUrlByIsbn(isbn_13))
+
+		} else {
+			embed = new EmbedBuilder()
+				.setTitle(`Next ${capitalizeWords(textChannel.name)} Meeting Reminder`)
+				.setColor('DarkRed')
+				.setDescription(`<@&${process.env.ROLE_ID}>\n` +
+					`**Meeting on**: ${startString}\n` +
+					`**Book**: [${capitalizeWords(work.title)}](${currentlyReadingLink})\n` +
+					`**Summary**: ${summary}`)
+		}
 
 		return [embed]
 
