@@ -32,7 +32,6 @@ export async function showCurrentRead(pgClientConfig, interaction) {
                 author = results.rows[0].author;
 
                 const isbn = await getIsbn(workId);
-                console.log(isbn);
 
                 if (isbn) {
                     embed = new EmbedBuilder()
