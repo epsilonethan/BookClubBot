@@ -9,7 +9,7 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction, pgClientConfig) {
 	const pgClient = new pg.Client(pgClientConfig);
 
-	pgClient.connect()
+	await pgClient.connect()
 		.catch((err) => logger.error(err));
 
 	const readList = await pgClient

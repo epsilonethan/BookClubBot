@@ -8,7 +8,7 @@ import moment from "moment-timezone";
 export async function listRecommendations(pgClientConfig, interaction) {
     const pgClient = new pg.Client(pgClientConfig);
 
-    pgClient.connect()
+    await pgClient.connect()
         .catch((err) => logger.error(err));
 
     const recList = await pgClient
@@ -46,7 +46,7 @@ export async function addRecommendation(pgClientConfig, interaction) {
 
     const pgClient = new pg.Client(pgClientConfig);
 
-    pgClient.connect()
+    await pgClient.connect()
         .catch(err => logger.error(err));
 
     await pgClient.query(query, values)
@@ -79,7 +79,7 @@ export async function deleteRecommendation(pgClientConfig, interaction) {
 
     const pgClient = new pg.Client(pgClientConfig);
 
-    pgClient.connect()
+    await pgClient.connect()
     await pgClient.query(selectQuery, [bookId])
         .then(async result => {
             if (result.rows.length > 0) {

@@ -44,7 +44,20 @@ export async function getIsbn(workKey) {
 	const editionsFiltered = editions.entries.filter(entry => checkForEnglish(entry) && (!('physical_format' in entry) || allowed_formats.includes(entry.physical_format.toLocaleLowerCase())))
 	const editionsSorted = editionsFiltered.sort((a, b) => b.latest_revision - a.latest_revision);
 
-	return editionsSorted[0].isbn_13[0]
+	let index_with_isbn = 0
+	let isbn;
+
+	while (isbn === undefined || isbn === null || isbn === '') {
+		if (editionsSorted[index_with_isbn].isbn_13){
+			isbn = editionsSorted[index_with_isbn].isbn_13[0]
+		} else if (editionsSorted[index_with_isbn].isbn_10){
+			isbn = editionsSorted[index_with_isbn].isbn_10[0]
+		} else {
+			index_with_isbn++
+		}
+	}
+
+	return isbn
 }
 
 

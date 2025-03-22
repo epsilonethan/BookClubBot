@@ -13,14 +13,14 @@ export async function showCurrentRead(pgClientConfig, interaction) {
     let embed;
     const olc = new OpenLibraryClient();
 
-    const query = 'SELECT * FROM bookclub.books WHERE read_end IS NULL AND read_start IS NOT NULL'
+    const selectQuery = 'SELECT * FROM bookclub.books WHERE read_end IS NULL AND read_start IS NOT NULL'
     const pgClient = new pg.Client(pgClientConfig);
 
-    pgClient.connect()
+    await pgClient.connect()
         .catch(err => logger.error(err));
 
     logger.info(`Retrieving current read for user ${interaction.user.id}`);
-    await pgClient.query(query)
+    await pgClient.query(selectQuery)
         .then(async results => {
             if (results.rows.length === 0) {
                 reply = 'We are not currently reading anything';
@@ -31,15 +31,37 @@ export async function showCurrentRead(pgClientConfig, interaction) {
                 title = results.rows[0].title;
                 author = results.rows[0].author;
 
-                embed = new EmbedBuilder()
-                    .setTitle('Current Read')
-                    .setColor('DarkRed')
-                    .addFields([
-                        {name: 'Title:', value: `[**${title}**](https://openlibrary.org/works/${workId})`, inline: true},
-                        {name: '\u200B', value: '\u200B', inline: true},
-                        {name: 'By:', value: `${author}`, inline: true},
-                    ])
-                    .setThumbnail(olc.getCoverUrlByIsbn(await getIsbn(workId)))
+                const isbn = await getIsbn(workId);
+                console.log(isbn);
+
+                if (isbn) {
+                    embed = new EmbedBuilder()
+                        .setTitle('Current Read')
+                        .setColor('DarkRed')
+                        .addFields([
+                            {
+                                name: 'Title:',
+                                value: `[**${title}**](https://openlibrary.org/works/${workId})`,
+                                inline: true
+                            },
+                            {name: '\u200B', value: '\u200B', inline: true},
+                            {name: 'By:', value: `${author}`, inline: true},
+                        ])
+                        .setThumbnail(olc.getCoverUrlByIsbn(isbn))
+                } else {
+                    embed = new EmbedBuilder()
+                        .setTitle('Current Read')
+                        .setColor('DarkRed')
+                        .addFields([
+                            {
+                                name: 'Title:',
+                                value: `[**${title}**](https://openlibrary.org/works/${workId})`,
+                                inline: true
+                            },
+                            {name: '\u200B', value: '\u200B', inline: true},
+                            {name: 'By:', value: `${author}`, inline: true},
+                        ])
+                }
             }
             logger.info(`Successfully retrieved current read for user ${interaction.user.id}`);
         })
@@ -68,7 +90,7 @@ export async function setCurrentRead(pgClientConfig, interaction) {
     const values = [date, bookId]
     const pgClient = new pg.Client(pgClientConfig);
 
-    pgClient.connect()
+    await pgClient.connect()
         .catch(err => logger.error(err));
 
     await pgClient.query('SELECT * FROM bookclub.books WHERE read_start IS NOT NULL AND read_end IS NULL;')
@@ -82,7 +104,7 @@ export async function setCurrentRead(pgClientConfig, interaction) {
             logger.error(err)
         });
 
-    if (!currentlyReadingSetFlag){
+    if (!currentlyReadingSetFlag) {
         logger.info(`Setting current read. Command ${interaction.commandName} executed by user ${interaction.user.id}`);
         await pgClient.query(updateQuery, values)
             .then(results => {
@@ -116,7 +138,7 @@ export async function unsetCurrentRead(pgClientConfig, interaction) {
     const updateQuery = 'UPDATE bookclub.books SET read_start = NULL WHERE id = ($1)'
     const pgClient = new pg.Client(pgClientConfig);
 
-    pgClient.connect()
+    await pgClient.connect()
         .catch(err => logger.error(err));
 
     await pgClient.query('SELECT * FROM bookclub.books WHERE read_start IS NOT NULL AND read_end IS NULL;')
@@ -157,7 +179,7 @@ export async function markCurrentReadFinished(pgClientConfig, interaction) {
     const values = [date]
     const pgClient = new pg.Client(pgClientConfig);
 
-    pgClient.connect()
+    await pgClient.connect()
         .catch(err => logger.error(err));
 
     await pgClient.query('SELECT * FROM bookclub.books WHERE read_start IS NOT NULL AND read_end IS NULL;')
