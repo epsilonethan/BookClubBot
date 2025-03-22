@@ -17,7 +17,7 @@ jobs:
       - name: Check if PR is from Dependabot
         id: check
         run: |
-          if [[ "${{ github.actor }}" == "dependabot[bot]" ]]; then
+          if [[ "${{ github.event.pull_request.user.login }}" == "dependabot[bot]" ]]; then
             echo "Is Dependabot PR"
             echo "approved=true" >> $GITHUB_ENV
           else
