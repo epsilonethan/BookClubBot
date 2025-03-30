@@ -10,7 +10,7 @@ export function buildBookList(type, bookList, interaction) {
 
     let botResponses = [];
     let botResponse = header + '\n';
-    bookList.rows.forEach((row, i) => {
+    bookList.forEach((row, i) => {
         const user = interaction.client.users.cache.get(row.added_by)
 
         let subString = `- ***${row.id}*** **[${row.title}](https://openlibrary.org/works/${row.work_id})** by **${row.author}**`
@@ -30,7 +30,7 @@ export function buildBookList(type, bookList, interaction) {
         }
 
         botResponse += subString;
-        if(i !== bookList.rows.length - 1){
+        if(i !== bookList.length - 1){
             botResponse += '\n';
         }
     })
